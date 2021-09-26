@@ -11,7 +11,7 @@ class Customer(models.Model):
         return self.name
 
 
-class Products(models.Model):
+class Product(models.Model):
     CATEGORY_CHOICES = (
         ('Indoor', 'Indoor'),
         ('Out Door', 'Out Door'),
@@ -25,3 +25,18 @@ class Products(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Order(models.Model):
+    STATUS_CHOICES = (
+        ('Pending', 'Pending'),
+        ('Out for delivery', 'Out for delivery'),
+        ('Delivered', 'Delivered'),
+    )
+
+    # customer =
+    # product =
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+    status = models.CharField(max_length=200, null=True, choices=STATUS_CHOICES)
+
+
