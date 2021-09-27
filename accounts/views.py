@@ -55,3 +55,18 @@ def create_order(request):
 
     context = {'form': form}
     return render(request, 'accounts/order_form.html', context)
+
+
+def update_order(request, pk):
+    order = Order.objects.get(pk=pk)
+    form = OrderForm(instance=order)
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+
+    context = {'form': form}
+
+    return render(request, 'accounts/order_form.html', context)

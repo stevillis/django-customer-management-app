@@ -8,4 +8,5 @@ urlpatterns = [
     path('customer/<str:pk>/', customer, name='customer'),
 
     path('create_order/', create_order, name='create_order'),
+    path('update_order/<str:pk>/', update_order, name='update_order'),
 ]
