@@ -1,5 +1,13 @@
 {% load static %}
 
+<style>
+    .panel {
+        font-size: 18px;
+        color: #fff;
+        margin-right: 20px;
+    }
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex justify-content-between">
     <a href="{% url 'home' %}">
         <img src="{% static 'img/stevillis-logo-64.png' %}" alt="Logo">
@@ -18,4 +26,7 @@
             </li>
         </ul>
     </div>
+
+    <span class="panel">Hello, {{ request.user }}</span>
+    <span class="panel"><a href="{% url 'logout' %}">Logout</a></span>
 </nav>
