@@ -1,8 +1,10 @@
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 
 from accounts.filters import OrderFilter
-from accounts.forms import OrderForm
+from accounts.forms import CreateUserForm, OrderForm
 from accounts.models import *
 
 
@@ -92,3 +94,27 @@ def delete_order(request, pk):
     context = {'order': order}
 
     return render(request, 'accounts/delete.html', context)
+
+
+def register_page(request):
+    # form = UserCreationForm()
+    form = CreateUserForm()
+
+    if request.method == 'POST':
+        # form = UserCreationForm(request.POST)
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account was created for {username}')
+
+            return redirect('login')
+
+    context = {'form': form}
+    return render(request, 'accounts/register.html', context)
+
+
+def login_page(request):
+    context = {}
+    return render(request, 'accounts/login.html', context)
