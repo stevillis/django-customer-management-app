@@ -1,12 +1,15 @@
 from django.shortcuts import render
 
+from accounts.models import *
+
 
 def home(request):
     return render(request, 'accounts/dashboard.html')
 
 
 def products(request):
-    return render(request, 'accounts/products.html')
+    prds = Product.objects.all()
+    return render(request, 'accounts/products.html', {'products': prds})
 
 
 def customer(request):
