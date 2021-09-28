@@ -2,16 +2,18 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 
-from accounts.decorators import unauthenticated_user
+from accounts.decorators import unauthenticated_user, allowed_users, admin_only
 from accounts.filters import OrderFilter
 from accounts.forms import CreateUserForm, OrderForm
 from accounts.models import *
 
 
 @login_required(login_url='login')
+@admin_only
 def home(request):
     orders = Order.objects.all()
     customers = Customer.objects.all()
@@ -34,6 +36,7 @@ def home(request):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def products(request):
     prds = Product.objects.all()
     return render(request, 'accounts/products.html', {'products': prds})
@@ -60,6 +63,7 @@ def customer(request, pk):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def create_order(request, pk):
     order_form_set = inlineformset_factory(Customer, Order, fields=('product', 'status'), extra=1)
     ctm = Customer.objects.get(pk=pk)
@@ -78,6 +82,7 @@ def create_order(request, pk):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def update_order(request, pk):
     order = Order.objects.get(pk=pk)
     form = OrderForm(instance=order)
@@ -94,6 +99,7 @@ def update_order(request, pk):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def delete_order(request, pk):
     order = Order.objects.get(pk=pk)
     if request.method == 'POST':
@@ -114,9 +120,12 @@ def register_page(request):
         # form = UserCreationForm(request.POST)
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-
+            user = form.save()
             username = form.cleaned_data.get('username')
+
+            group = Group.objects.get(name='customer')
+            user.groups.add(group)
+
             messages.success(request, f'Account was created for {username}')
 
             return redirect('login')
